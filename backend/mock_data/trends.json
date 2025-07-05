@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "topic": "Edge AI in Smart Homes",
+    "source": "Twitter",
+    "score": 85
+  },
+  {
+    "id": 2,
+    "topic": "Decentralised IoT Networks",
+    "source": "Reddit",
+    "score": 79
+  }
+]

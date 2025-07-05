@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "topic": "Edge AI in Smart Homes",
+    "caption": "Discover how Edge AI is revolutionising smart homes with real-time decision making.",
+    "status": "pending"
+  },
+  {
+    "id": 2,
+    "topic": "Decentralised IoT Networks",
+    "caption": "Is your smart home vulnerable? Learn why decentralised networks matter.",
+    "status": "pending"
+  }
+]

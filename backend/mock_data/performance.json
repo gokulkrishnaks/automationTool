@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "topic": "Edge AI in Smart Homes",
+    "likes": 120,
+    "shares": 30,
+    "comments": 15
+  },
+  {
+    "id": 2,
+    "topic": "Decentralised IoT Networks",
+    "likes": 95,
+    "shares": 22,
+    "comments": 9
+  }
+]
