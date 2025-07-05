@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Automation System - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .role-toggle {
+            display: flex;
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .role-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .role-btn.active {
+            background: #4299e1;
+            color: white;
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+        }
+
+        .role-btn:hover:not(.active) {
+            background: #edf2f7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-warning {
+            background: #fef5e7;
+            color: #744210;
+        }
+
+        .badge-danger {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .badge-info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .trend-item, .content-item, .metric-item {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .trend-item:last-child, .content-item:last-child, .metric-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .trend-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4299e1;
+        }
+
+        .growth-rate {
+            color: #48bb78;
+            font-weight: 500;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-approve {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #38a169;
+            transform: translateY(-1px);
+        }
+
+        .btn-reject {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #e53e3e;
+            transform: translateY(-1px);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4299e1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-only {
+            display: none;
+        }
+
+        .admin-only.show {
+            display: block;
+        }
+
+        .client-view .admin-only {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">ContentAI Dashboard</div>
+            <div class="role-toggle">
+                <button class="role-btn active" onclick="switchRole('admin')">Admin</button>
+                <button class="role-btn" onclick="switchRole('client')">Client</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Dashboard Statistics -->
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-trends">-</div>
+                <div class="stat-label">Active Trends</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-content">-</div>
+                <div class="stat-label">Pending Content</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-views">-</div>
+                <div class="stat-label">Total Views</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avg-engagement">-</div>
+                <div class="stat-label">Avg Engagement</div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Trending Topics -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Trending Topics</h3>
+                    <span class="badge badge-info">Live</span>
+                </div>
+                <div id="trends-container" class="loading">Loading trends...</div>
+            </div>
+
+            <!-- AI Content Ideas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">AI Content Ideas</h3>
+                    <span class="badge badge-warning">Pending Review</span>
+                </div>
+                <div id="content-container" class="loading">Loading content...</div>
+            </div>
+
+            <!-- Performance Analytics -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Performance Analytics</h3>
+                    <span class="badge badge-success">Published</span>
+                </div>
+                <div id="performance-container" class="loading">Loading analytics...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRole = 'admin';
+        const API_BASE = 'http://localhost:8000';
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+        });
+
+        // Switch between Admin and Client roles
+        function switchRole(role) {
+            currentRole = role;
+            
+            // Update button states
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update body class for styling
+            document.body.className = role === 'client' ? 'client-view' : '';
+            
+            // Show/hide admin-only elements
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.classList.toggle('show', role === 'admin');
+            });
+        }
+
+        // Load all dashboard data
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadTrends(),
+                    loadContent(),
+                    loadPerformance()
+                ]);
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        // Load dashboard statistics
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard/stats`);
+                const data = await response.json();
+                
+                document.getElementById('total-trends').textContent = data.total_trends;
+                document.getElementById('pending-content').textContent = data.pending_content;
+                document.getElementById('total-views').textContent = data.total_views.toLocaleString();
+                document.getElementById('avg-engagement').textContent = data.avg_engagement + '%';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load trending topics
+        async function loadTrends() {
+            try {
+                const response = await fetch(`${API_BASE}/trends`);
+                const data = await response.json();
+                
+                const container = document.getElementById('trends-container');
+                container.innerHTML = '';
+                
+                data.trends.forEach(trend => {
+                    const trendElement = document.createElement('div');
+                    trendElement.className = 'trend-item';
+                    trendElement.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">${trend.topic}</div>
+                                <div style="font-size: 0.875rem; color: #718096;">${trend.category} • ${trend.volume.toLocaleString()} mentions</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="trend-score">${trend.score}</div>
+                                <div class="growth-rate">${trend.growth_rate}</div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(trendElement);
+                });
+            } catch (error) {
+                console.error('Error loading trends:', error);
+                document.getElementById('trends-container').innerHTML = '<p>Error loading trends</p>';
+            }
+        }
+
+        // Load AI content ideas
+        async function loadContent() {
+            try {
+                const response = await fetch(`${API_BASE}/content`);
+                const data = await response.json();
+                
+                const container = document.getElementById('content-container');
+                container.innerHTML = '';
+                
+                data.content.forEach(content => {
+                    const contentElement = document.createElement('div');
+                    contentElement.className = 'content-item';
+                    
+                    const statusBadge = getStatusBadge(content.status);
+                    const actions = currentRole === 'admin' && content.status === 'pending' ? 
+                        `<div class="content-actions admin-only ${currentRole === 'admin' ? 'show' : ''}">
+                            <button class="btn btn-approve" onclick="approveContent(${content.id})">Approve</button>
+                            <button class="btn btn-reject" onclick="rejectContent(${content.id})">Reject</button>
+                        </div>` : '';
+                    
+                    contentElement.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                            <div style="font-weight: 600; flex: 1;">${content.title}</div>
+                            ${statusBadge}
+                        </div>
+                        <div style="font-size: 0.875rem; color: #718096; margin-bottom: 0.5rem;">${content.description}</div>
+                        <div style="display: flex; gap: 1rem; font-size: 0.75rem; color: #a0aec0;">
+                            <span>${content.content_type}</span>
+                            <span>${content.word_count} words</span>
+                            <span>SEO: ${content.seo_score}/100</span>
+                        </div>
+                        ${actions}
+                    `;
+                    container.appendChild(contentElement);
+                });
+            } catch (error) {
+                console.error('Error loading content:', error);
+                document.getElementById('content-container').innerHTML = '<p>Error loading content</p>';
+            }
+        }
+
+        // Load performance analytics
+        async function loadPerformance() {
+            try {
+                const response = await fetch(`${API_BASE}/performance`);
+                const data = await response.json();
+                
+                const container = document.getElementById('performance-container');
+                container.innerHTML = '';
+                
+                data.analytics.forEach(metric => {
+                    const metricElement = document.createElement('div');
+                    metricElement.className = 'metric-item';
+                    metricElement.innerHTML = `
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">${metric.title}</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 0.5rem;">
+                            <div>
+                                <div class="metric-value" style="font-size: 1.25rem;">${metric.views.toLocaleString()}</div>
+                                <div class="metric-label">Views</div>
+                            </div>
+                            <div>
+                                <div class="metric-value" style="font-size: 1.25rem;">${metric.engagement_rate}%</div>
+                                <div class="metric-label">Engagement</div>
+                            </div>
+                            <div>
+                                <div class="metric-value" style="font-size: 1.25rem;">${metric.shares}</div>
+                                <div class="metric-label">Shares</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #a0aec0;">
+                            Published: ${new Date(metric.published_date).toLocaleDateString()}
+                        </div>
+                    `;
+                    container.appendChild(metricElement);
+                });
+            } catch (error) {
+                console.error('Error loading performance:', error);
+                document.getElementById('performance-container').innerHTML = '<p>Error loading performance data</p>';
+            }
+        }
+
+        // Get status badge HTML
+        function getStatusBadge(status) {
+            const badges = {
+                'pending': '<span class="badge badge-warning">Pending</span>',
+                'approved': '<span class="badge badge-success">Approved</span>',
+                'rejected': '<span class="badge badge-danger">Rejected</span>'
+            };
+            return badges[status] || '<span class="badge badge-info">Unknown</span>';
+        }
+
+        // Approve content
+        async function approveContent(contentId) {
+            try {
+                const response = await fetch(`${API_BASE}/content/${contentId}/approve`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(`Content approved successfully!`);
+                    loadContent(); // Reload content list
+                    loadStats(); // Update stats
+                } else {
+                    alert('Error approving content');
+                }
+            } catch (error) {
+                console.error('Error approving content:', error);
+                alert('Error approving content');
+            }
+        }
+
+        // Reject content
+        async function rejectContent(contentId) {
+            try {
+                const response = await fetch(`${API_BASE}/content/${contentId}/reject`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(`Content rejected.`);
+                    loadContent(); // Reload content list
+                    loadStats(); // Update stats
+                } else {
+                    alert('Error rejecting content');
+                }
+            } catch (error) {
+                console.error('Error rejecting content:', error);
+                alert('Error rejecting content');
+            }
+        }
+
+        // Auto-refresh data every 30 seconds
+        setInterval(loadDashboardData, 30000);
+    </script>
+</body>
+</html>
